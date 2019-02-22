@@ -1305,7 +1305,9 @@ class DataFrame(object):
     def T(self):
         return self.transpose()
 
-    def merge(self, right, on=None, how='left', lsuffix='_x', rsuffix='_y',
+    def merge(self, right, on=None, right_on=None, left_on=None,
+            left_index=None, right_index=None, how='left', lsuffix='_x', rsuffix='_y',
+            suffixes=('_x', '_y'), indicator=None,
               type="", method='hash'):
         """Merge GPU DataFrame objects by performing a database-style join operation
         by columns or indexes.
@@ -1364,6 +1366,8 @@ class DataFrame(object):
 
         """
         _gdf.nvtx_range_push("CUDF_JOIN", "blue")
+        if right_on and left_on and left_on == right_on:
+            on = right_on
 
         # Early termination Error checking
         if type != "":
